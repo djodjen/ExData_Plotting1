@@ -13,3 +13,5 @@ myData <- read.table(fileToRead, header = TRUE, sep = ';', skip = 66638,  nrows 
 colnames(myData) <- names
 
 hist(myData[ ,3], col = "red", xlab = "Global Active Power (kilowats)", main = "Global Active Power")
+dev.copy(device = png, "Plot1.png")
+dev.off()
