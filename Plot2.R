@@ -1,22 +1,21 @@
 setwd("c:/coursera")
 fileToRead <- "c:/coursera/household_power_consumption.txt"
-myData <- read.table(fileToRead, header = TRUE, sep = ';', nrows = 52000)
 
+##reading the file and formating the Date field to be a Date
+myData <- read.table(fileToRead, header = TRUE, sep = ';', na.strings="?")
+myData$Date <- as.Date(myData$Date, format='%d/%m/%Y')
 
-
-##(adding skip causes to lose the header names)
-myData <- read.table(fileToRead, header = TRUE, sep = ';', nrows = 1)
-names <- colnames(myData)
-
-##now reasing the subset by skipping
-myData <- read.table(fileToRead, header = TRUE, sep = ';', skip = 66638,  nrows = (69518 - 66638) )
-colnames(myData) <- names
+##subsetting only the data that we need
+dateLow <- as.Date('2007-02-01', format='%Y-%m-%d')
+dateHigh <- as.Date('2007-02-02', format='%Y-%m-%d')
+dataSubset <- subset(myData, Date == dateLow | Date == dateHigh)
 
 ##combining the date and time together
-myDate <- paste(myData[ , 1] , myData[ ,2])
-newDate <- as.Date(strptime(myDate, "%d/%m/%Y %H:%M:%S"))
-plot(newDate, myData[ , 3], xlab = "", ylab = "Global Active Power (kilowats)", pch = 20, main = "")
+newDateTime <- paste(dataSubset[ , 1] , dataSubset[ ,2])
+dataSubset$newDateTime <- strptime(newDateTime, "%Y-%m-%d %H:%M:%S")
 
-
+##creating Plot2
+#Using with so I can referencing using the names themselves
+with(dataSubset, plot(newDateTime, Global_active_power, ylab="Global Active Power (killowatts)", xlab="", type="l"))
 dev.copy(device = png, "Plot2.png")
 dev.off()
