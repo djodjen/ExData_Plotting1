@@ -1,17 +1,16 @@
 setwd("c:/coursera")
 fileToRead <- "c:/coursera/household_power_consumption.txt"
-myData <- read.table(fileToRead, header = TRUE, sep = ';', nrows = 52000)
 
+##reading the file and formating the Date field to be a Date
+myData <- read.table(fileToRead, header = TRUE, sep = ';', na.strings="?")
+myData$Date <- as.Date(myData$Date, format='%d/%m/%Y')
 
+##subsetting only the data that we need
+dateLow <- as.Date('2007-02-01', format='%Y-%m-%d')
+dateHigh <- as.Date('2007-02-02', format='%Y-%m-%d')
+dataSubset <- subset(myData, Date == dateLow | Date == dateHigh)
 
-##(adding skip causes to lose the header names)
-myData <- read.table(fileToRead, header = TRUE, sep = ';', nrows = 1)
-names <- colnames(myData)
-
-##now reasing the subset by skipping
-myData <- read.table(fileToRead, header = TRUE, sep = ';', skip = 66638,  nrows = (69518 - 66638) )
-colnames(myData) <- names
-
-hist(myData[ ,3], col = "red", xlab = "Global Active Power (kilowats)", main = "Global Active Power")
+##creating Plot1
+hist(dataSubset$Global_active_power, col = "red", xlab = "Global Active Power (kilowats)", main = "Global Active Power")
 dev.copy(device = png, "Plot1.png")
 dev.off()
